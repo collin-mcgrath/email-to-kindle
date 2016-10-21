@@ -17,20 +17,20 @@ def fetch_last_email
       $gmail.logout
     ensure
       $gmail = Gmail.new $gmail_login, $gmail_password
-      email = $gmail.inbox.emails.last    
+      email = $gmail.inbox.emails.last
     end
   end
-  
+
   if email.uid == $last_email_uid
     return
   end
-   
+
   $last_email_uid = email.uid
   $sender = Mail::Encodings.value_decode email.sender.first.name
   $subject = Mail::Encodings.value_decode email.subject
   $received_at = email.envelope.date
   $image = nil
-  if email.attachments.size > 0 
+  if email.attachments.size > 0
     $image = email.attachments.first.decoded
   end
 end
@@ -40,7 +40,7 @@ set :bind, '0.0.0.0'
 
 get '/email' do
   fetch_last_email
-  
+
   <<STRING
 <html>
   <head>
@@ -58,9 +58,9 @@ p {padding-top: 0; paddding-bottom: 0; margin-top: 0; margin-bottom: 0;}
 
           if(typeof XMLHttpRequest !== 'undefined') xhr = new XMLHttpRequest();
           else {
-            var versions = ["MSXML2.XmlHttp.5.0", 
+            var versions = ["MSXML2.XmlHttp.5.0",
                 "MSXML2.XmlHttp.4.0",
-                "MSXML2.XmlHttp.3.0", 
+                "MSXML2.XmlHttp.3.0",
                 "MSXML2.XmlHttp.2.0",
                 "Microsoft.XmlHttp"]
 
@@ -84,10 +84,10 @@ p {padding-top: 0; paddding-bottom: 0; margin-top: 0; margin-bottom: 0;}
               return;
             }
 
-            // all is well	
+            // all is well
             if(xhr.readyState === 4) {
               callback(xhr);
-            }			
+            }
           }
 
           xhr.open('GET', url, true);
@@ -95,7 +95,7 @@ p {padding-top: 0; paddding-bottom: 0; margin-top: 0; margin-bottom: 0;}
         }
 
         lastEmailChangedCheck = function(){
-          ajaxGetRequest('should_we_reload?rendered_email_uid=#{$last_email_uid}', function(xhr) {	
+          ajaxGetRequest('should_we_reload?rendered_email_uid=#{$last_email_uid}', function(xhr) {
             if(xhr.responseText == 'yes')
                 location.reload();
           });
